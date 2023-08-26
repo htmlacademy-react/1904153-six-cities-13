@@ -39,3 +39,5 @@ export const getRandomUniqueValuesFromArray = <T>(arr: T[], number: number): T[]
 
   return result;
 };
+
+export const makeFirstLetterUpper = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);

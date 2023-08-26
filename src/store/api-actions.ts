@@ -7,7 +7,7 @@ import { FullOfferType } from '../components/types/full-offer';
 import { redirectToRoute } from './actions';
 import {
   setOffers, setOffersBackup, setOffersLoadStatus, setFullOffer,
-  setFullOfferLoadStatus, setFavOffers, setFavOffersLoadStatus, sortOffers, setError
+  setFullOfferLoadStatus, setFavOffers, setFavOffersLoadStatus, sortOffers, setError, setOfferFetchError
 } from './offers-process/offers-process';
 import { setNearbyOffers, setNearbyOffersLoadStatus } from './nearby-offers-process/nearby-offers-process';
 import { setReviews, setReviewsLoadStatus, setCommentPostStatus } from './comments-process/comments-process';
@@ -78,6 +78,8 @@ export const fetchFullOffer = createAsyncThunk<void, { id: string | undefined },
       dispatch(setFullOfferLoadStatus(false));
     } catch {
       toast.error('Offer is not available, please try again');
+      dispatch(setFullOfferLoadStatus(false));
+      dispatch(setOfferFetchError(true));
     }
   }
 );
@@ -94,6 +96,7 @@ export const fetchNearbyOffers = createAsyncThunk<void, { id: string | undefined
       dispatch(setNearbyOffersLoadStatus(false));
     } catch {
       toast.error('Nearby offers are not available, please try again');
+      dispatch(setNearbyOffersLoadStatus(false));
     }
   }
 );
@@ -110,6 +113,7 @@ export const fetchReviews = createAsyncThunk<void, { id: string | undefined }, t
       dispatch(setReviewsLoadStatus(false));
     } catch {
       toast.error('Reviews are not available, please try again');
+      dispatch(setReviewsLoadStatus(false));
     }
   }
 );

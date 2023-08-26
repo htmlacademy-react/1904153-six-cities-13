@@ -6,6 +6,7 @@ import { useAppSelector } from '../../hooks/useAppSelector/useAppSelector';
 import { getAuthStatus } from '../../store/user-process.ts/selectors';
 import { AuthStatus, AppRoute, RATING_COEFFICIENT } from '../../const';
 import { redirectToRoute } from '../../store/actions';
+import { makeFirstLetterUpper } from '../../utils';
 
 type OfferCardProps = {
   id: string;
@@ -95,7 +96,7 @@ const OfferCardComponent = (
             {title}
           </Link>
         </h2>
-        <p className="place-card__type">{type.charAt(0).toUpperCase() + type.slice(1)}</p>
+        <p className="place-card__type">{makeFirstLetterUpper(type)}</p>
       </div>
     </article>
   );

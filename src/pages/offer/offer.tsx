@@ -14,59 +14,57 @@ import { fetchNearbyOffers, fetchFullOffer, changeFavStatus } from '../../store/
 import { LoadingScreen } from '../loading-screen/loading-screen';
 import { NotFound } from '../404/404';
 import { setActiveId, setCurrentOffer } from '../../store/offers-process/offers-process';
-import { getOffers, getCurrentOffer, getOffersLoadStatus, getFullOffer, getFullOfferLoadStatus } from '../../store/offers-process/selectors';
-import { getNearbyOffers, getNearbyOffersLoadStatus } from '../../store/nearby-offers-process/selectors';
+import { getCurrentOffer, getFullOffer, getOfferFetchError } from '../../store/offers-process/selectors';
+import { getNearbyOffers, } from '../../store/nearby-offers-process/selectors';
 import { getAuthStatus } from '../../store/user-process.ts/selectors';
 import { AuthStatus, AppRoute, RATING_COEFFICIENT } from '../../const';
 import { redirectToRoute } from '../../store/actions';
+import { makeFirstLetterUpper } from '../../utils';
 
 export const Offer = () => {
   const dispatch = useAppDispatch();
   const offerId = useParams().id;
-  const offers = useAppSelector(getOffers);
   const authStatus = useAppSelector(getAuthStatus);
-  const isOffersLoading = useAppSelector(getOffersLoadStatus);
-  const isIdExist = offers?.some((offer) => offer.id === offerId);
+  const offer = useAppSelector(getFullOffer);
+  const hasError = useAppSelector(getOfferFetchError);
 
   useEffect(() => {
-    if (!isIdExist || offerId === undefined) {
+    if (!offerId) {
       return;
     }
     dispatch(fetchFullOffer({ id: offerId }));
     dispatch(fetchNearbyOffers({ id: offerId }));
     dispatch(setActiveId(offerId));
     dispatch(setCurrentOffer());
-  }, [isIdExist, offerId, dispatch, authStatus]
+  }, [offerId, dispatch]
   );
 
-  const offer = useAppSelector(getFullOffer);
+  useEffect(() => {
+    if (!offerId) {
+      return;
+    }
+    dispatch(setCurrentOffer());
+  }, [offerId, authStatus, dispatch]);
+
+
   const loadedNearbyOffers = useAppSelector(getNearbyOffers);
   const currentOffer = useAppSelector(getCurrentOffer);
   const nearbyOffers = useMemo(() => {
     if (currentOffer === null) {
-      return;
+      return loadedNearbyOffers;
     }
     return [...loadedNearbyOffers, currentOffer];
   }, [loadedNearbyOffers, currentOffer]);
 
-  const isOfferLoading = useAppSelector(getFullOfferLoadStatus);
-  const isNearbyOfferLoading = useAppSelector(getNearbyOffersLoadStatus);
-
-  const isPageLoading = isOfferLoading || isNearbyOfferLoading;
-
-  if (!isIdExist && !isOffersLoading) {
-    return (
-      <NotFound />
-    );
+  if (hasError) {
+    return <NotFound />;
   }
 
-  if (isPageLoading || offer === null || nearbyOffers === undefined) {
-    return (
-      <LoadingScreen />
-    );
+  if (!offer) {
+    return <LoadingScreen />;
   }
 
-  const { bedrooms, city, description, goods, id, host, images, isFavorite, isPremium, maxAdults, price, rating, title, type } = offer;
+  const { bedrooms, city, description, goods, id, host, images, isFavorite, isPremium, maxAdults, price, rating, title } = offer;
 
   const setFav = () => {
     if (authStatus !== AuthStatus.Auth) {
@@ -130,7 +128,7 @@ export const Offer = () => {
                 <span className="offer__rating-value rating__value">{rating}</span>
               </div>
               <ul className="offer__features">
-                <li className="offer__feature offer__feature--entire">{type.charAt(0).toUpperCase() + type.slice(1)}</li>
+                <li className="offer__feature offer__feature--entire">{makeFirstLetterUpper(offer.type)}</li>
                 <li className="offer__feature offer__feature--bedrooms">
                   {bedrooms} Bedrooms
                 </li>

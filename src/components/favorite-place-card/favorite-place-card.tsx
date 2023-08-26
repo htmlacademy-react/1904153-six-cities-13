@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { AppRoute, RATING_COEFFICIENT } from '../../const';
 import { useAppDispatch } from '../../hooks/useAppDispatch/useAppDispatch';
 import { changeFavStatus, fetchFavOffers } from '../../store/api-actions';
+import { makeFirstLetterUpper } from '../../utils';
 
 type FavoritePlaceCardType = {
   cardByCity: OfferType;
 }
 
 export const FavoritePlaceCard = ({ cardByCity }: FavoritePlaceCardType) => {
-  const { id, isFavorite, isPremium, previewImage, price, rating, title, type } = cardByCity;
+  const { id, isFavorite, isPremium, previewImage, price, rating, title } = cardByCity;
   const dispatch = useAppDispatch();
   const deleteFavStatus = () => {
     (async () => {
@@ -64,7 +65,7 @@ export const FavoritePlaceCard = ({ cardByCity }: FavoritePlaceCardType) => {
             {title}
           </Link>
         </h2>
-        <p className="place-card__type">{type.charAt(0).toUpperCase() + type.slice(1)}</p>
+        <p className="place-card__type">{makeFirstLetterUpper(cardByCity.type)}</p>
       </div>
     </article>
   );

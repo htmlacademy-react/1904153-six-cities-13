@@ -16,6 +16,7 @@ type OffersProcessType = {
   favOffers: OfferType[];
   isFavOffersLoading: boolean;
   hasError: boolean;
+  offerFetchError: boolean;
 }
 
 const initialState: OffersProcessType = {
@@ -31,6 +32,7 @@ const initialState: OffersProcessType = {
   favOffers: [],
   isFavOffersLoading: true,
   hasError: false,
+  offerFetchError: false,
 };
 
 export const offersProcessSlice = createSlice({
@@ -88,9 +90,12 @@ export const offersProcessSlice = createSlice({
           break;
       }
     },
+    setOfferFetchError: (state, action: PayloadAction<boolean>) => {
+      state.offerFetchError = action.payload;
+    },
   }
 });
 
 export const { setActiveCity, setActiveId, setCurrentOffer, setError,
   setOffers, setOffersBackup, setOffersLoadStatus, setFullOffer,
-  setFullOfferLoadStatus, setFavOffers, sortOffers, setFavOffersLoadStatus } = offersProcessSlice.actions;
+  setFullOfferLoadStatus, setFavOffers, sortOffers, setFavOffersLoadStatus, setOfferFetchError } = offersProcessSlice.actions;
